@@ -1,0 +1,1 @@
+function getAll (req, res)
