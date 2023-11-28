@@ -7,9 +7,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-
 app.get("/", (req, res) => {
-  res.json({ message: "hola mundo" });
+  res.json({ message: "Hola mundo" });
 });
 
 const connection = await connectToDatabase();
@@ -25,6 +24,7 @@ app.get("/products", async (req, res) => {
   }
 });
 
+// Usar el router de productos
 app.use("/products", productsRT);
 
 app.listen(PORT, (err) => {
@@ -34,4 +34,3 @@ app.listen(PORT, (err) => {
       : `Servidor corre en http://localhost:${PORT}`
   );
 });
-

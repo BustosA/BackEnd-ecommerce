@@ -1,57 +1,84 @@
-import { connection } from "../../db_config";
+import { connectToDatabase } from "../../db_config.js";
 
 async function getAllProducts() {
-    try {
-      const [products, _info] = await connection.query("SELECT * FROM products");
-      return products;
-    } catch (error) {
-      console.error("Error al obtener productos:", error);
-      throw error;
+  const pool = await connectToDatabase();
+  let connection;
+
+  try {
+    connection = await pool.getConnection();
+    const [products, _info] = await connection.query("SELECT * FROM products");
+    return products;
+  } catch (error) {
+    console.error("Error getting products:", error);
+    throw error;
+  } finally {
+    if (connection) {
+      connection.release();
     }
   }
+}
 
-async function getProductById(productId) {
+async function addNewProduct(productData) {
+  const pool = await connectToDatabase();
+  let connection;
+
   try {
-    const [product, _info] = await connection.query("SELECT * FROM products WHERE id = ?", [productId]);
-    return product[0];
+    connection = await pool.getConnection();
+    const [result, _info] = await connection.query(
+      "INSERT INTO products SET ?",
+      [productData]
+    );
+    return result.insertId;
   } catch (error) {
-    console.error(`Error al obtener el producto con ID ${productId}:`, error);
+    console.error("Error adding new product:", error);
     throw error;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
   }
 }
 
-async function createProduct(productData) {
+async function updateProduct(productId, productData) {
+  const pool = await connectToDatabase();
+  let connection;
+
   try {
-    const [result, _info] = await connection.query("INSERT INTO products SET ?", [productData]);
-    return result.insertId; 
+    connection = await pool.getConnection();
+    const [result, _info] = await connection.query(
+      "UPDATE products SET ? WHERE id = ?",
+      [productData, productId]
+    );
+    return result.affectedRows > 0;
   } catch (error) {
-    console.error("Error al crear un nuevo producto:", error);
+    console.error("Error updating product:", error);
     throw error;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
   }
 }
 
-async function updateProductById(productId, updatedData) {
+async function deleteProduct(productId) {
+  const pool = await connectToDatabase();
+  let connection;
+
   try {
-    await connection.query("UPDATE products SET ? WHERE id = ?", [updatedData, productId]);
+    connection = await pool.getConnection();
+    const [result, _info] = await connection.query(
+      "DELETE FROM products WHERE id = ?",
+      [productId]
+    );
+    return result.affectedRows > 0;
   } catch (error) {
-    console.error(`Error al actualizar el producto con ID ${productId}:`, error);
+    console.error("Error deleting product:", error);
     throw error;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
   }
 }
 
-async function deleteProductById(productId) {
-  try {
-    await connection.query("DELETE FROM products WHERE id = ?", [productId]);
-  } catch (error) {
-    console.error(`Error al eliminar el producto con ID ${productId}:`, error);
-    throw error;
-  }
-}
-
-export {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProductById,
-  deleteProductById
-};
+export { getAllProducts, addNewProduct, updateProduct, deleteProduct };
