@@ -81,4 +81,32 @@ async function deleteProduct(productId) {
   }
 }
 
+async function searchProducts(name, categoryId) {
+  const pool = await connectToDatabase();
+  let connection;
+
+  try {
+    connection = await pool.getConnection();
+    let query = "SELECT * FROM products WHERE name LIKE ?";
+    const queryParams = [`%${name}%`];
+
+    if (categoryId) {
+      query += " AND category_id = ?";
+      queryParams.push(categoryId);
+    }
+
+    const [products, _info] = await connection.query(query, queryParams);
+    return products;
+  } catch (error) {
+    console.error("Error searching products:", error);
+    throw error;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
+
+export { searchProducts };
+
 export { getAllProducts, addNewProduct, updateProduct, deleteProduct };

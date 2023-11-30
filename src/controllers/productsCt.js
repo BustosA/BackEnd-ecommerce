@@ -3,6 +3,7 @@ import {
   addNewProduct,
   updateProduct,
   deleteProduct,
+  searchProducts,
 } from "../models/productsMd.js";
 
 async function getAll(req, res) {
@@ -16,7 +17,7 @@ async function getAll(req, res) {
 }
 
 async function addNewProductController(req, res) {
-  const productData = req.body; // Assuming product data is sent in the request body
+  const productData = req.body;
   try {
     const productId = await addNewProduct(productData);
     res.json({ message: "Producto creado con éxito", productId });
@@ -28,7 +29,7 @@ async function addNewProductController(req, res) {
 
 async function updateProductController(req, res) {
   const productId = req.params.id;
-  const productData = req.body; // Assuming updated product data is sent in the request body
+  const productData = req.body;
   try {
     const success = await updateProduct(productId, productData);
     if (success) {
@@ -62,6 +63,25 @@ async function deleteProductController(req, res) {
     res.status(500).json({ error: "Error al eliminar el producto" });
   }
 }
+
+async function searchProductsController(req, res) {
+  const { name, category_id } = req.query;
+
+  try {
+    if (!name) {
+      return res.status(400).json({ error: 'Se requiere un nombre para la búsqueda' });
+    }
+
+    const products = await searchProducts(name, category_id);
+    res.json(products);
+  } catch (error) {
+    console.error("Error searching products:", error);
+    res.status(500).json({ error: "Error al buscar productos" });
+  }
+}
+
+
+export { searchProductsController };
 
 export {
   getAll,
