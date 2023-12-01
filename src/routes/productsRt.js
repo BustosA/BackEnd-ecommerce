@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getAll,
+  getAllCategories,
   addNewProduct,
   updateProduct,
   deleteProduct,
@@ -14,4 +15,5 @@ router.post("/", addNewProduct);
 router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 router.get("/search", searchProductsController);
+router.get("/categories", getAllCategories);
 

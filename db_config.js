@@ -5,7 +5,7 @@ const dbConfig = {
   user: "root",
   password: "admin",
   port: 3306,
-  database: "ecommerce_gamer",
+  database: "ecommerce_hardware",
 };
 
 async function connectToDatabase() {

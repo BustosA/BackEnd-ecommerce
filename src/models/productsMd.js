@@ -18,6 +18,24 @@ async function getAllProducts() {
   }
 }
 
+async function getAllCategories() {
+  const pool = await connectToDatabase();
+  let connection;
+
+  try {
+    connection = await pool.getConnection();
+    const [categories, _info] = await connection.query("SELECT * FROM categories");
+    return categories;
+  } catch (error) {
+    console.error("Error al obtener categorías:", error);
+    throw error;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
+
 async function addNewProduct(productData) {
   const pool = await connectToDatabase();
   let connection;
@@ -109,4 +127,4 @@ async function searchProducts(name, categoryId) {
 
 export { searchProducts };
 
-export { getAllProducts, addNewProduct, updateProduct, deleteProduct };
+export { getAllProducts, getAllCategories, addNewProduct, updateProduct, deleteProduct };

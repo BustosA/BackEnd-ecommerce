@@ -1,5 +1,6 @@
 import {
   getAllProducts,
+  getAllCategories as getAllCategoriesModel,
   addNewProduct,
   updateProduct,
   deleteProduct,
@@ -13,6 +14,16 @@ async function getAll(req, res) {
   } catch (error) {
     console.error("Error al obtener productos:", error);
     res.status(500).json({ error: "Error al obtener productos" });
+  }
+}
+
+async function getAllCategories(req, res) {
+  try {
+    const categories = await getAllCategoriesModel();
+    res.json(categories);
+  } catch (error) {
+    console.error("Error al obtener categorías:", error);
+    res.status(500).json({ error: "Error al obtener categorías" });
   }
 }
 
@@ -85,6 +96,7 @@ export { searchProductsController };
 
 export {
   getAll,
+  getAllCategories,
   addNewProductController as addNewProduct,
   updateProductController as updateProduct,
   deleteProductController as deleteProduct,
