@@ -1,5 +1,6 @@
 import {
   getAllProducts,
+  getProductById,
   getAllCategories as getAllCategoriesModel,
   addNewProduct,
   updateProduct,
@@ -76,14 +77,14 @@ async function deleteProductController(req, res) {
 }
 
 async function searchProductsController(req, res) {
-  const { name, category_id } = req.query;
+  const { name } = req.query;
 
   try {
     if (!name) {
       return res.status(400).json({ error: 'Se requiere un nombre para la búsqueda' });
     }
 
-    const products = await searchProducts(name, category_id);
+    const products = await searchProducts(name);
     res.json(products);
   } catch (error) {
     console.error("Error searching products:", error);
@@ -91,11 +92,27 @@ async function searchProductsController(req, res) {
   }
 }
 
+async function getProductByIdController(req, res) {
+  const productId = req.params.id;
 
-export { searchProductsController };
+  try {
+    const product = await getProductById(productId);
+
+    if (!product) {
+      return res.status(404).json({ error: `Producto con ID ${productId} no encontrado` });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('Error getting product by ID:', error);
+    res.status(500).json({ error: 'Error al obtener el producto' });
+  }
+}
 
 export {
   getAll,
+  getProductByIdController,
+  searchProductsController,
   getAllCategories,
   addNewProductController as addNewProduct,
   updateProductController as updateProduct,

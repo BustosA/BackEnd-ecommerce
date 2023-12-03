@@ -99,19 +99,14 @@ async function deleteProduct(productId) {
   }
 }
 
-async function searchProducts(name, categoryId) {
+async function searchProducts(name) {
   const pool = await connectToDatabase();
   let connection;
 
   try {
     connection = await pool.getConnection();
-    let query = "SELECT * FROM products WHERE name LIKE ?";
+    const query = "SELECT * FROM products WHERE name LIKE ?";
     const queryParams = [`%${name}%`];
-
-    if (categoryId) {
-      query += " AND category_id = ?";
-      queryParams.push(categoryId);
-    }
 
     const [products, _info] = await connection.query(query, queryParams);
     return products;
@@ -125,6 +120,27 @@ async function searchProducts(name, categoryId) {
   }
 }
 
-export { searchProducts };
+async function getProductById(productId) {
+  const pool = await connectToDatabase();
+  let connection;
 
-export { getAllProducts, getAllCategories, addNewProduct, updateProduct, deleteProduct };
+  try {
+    connection = await pool.getConnection();
+    const [product, _info] = await connection.query('SELECT * FROM products WHERE id = ?', [productId]);
+
+    if (product.length === 0) {
+      return null;
+    }
+
+    return product[0];
+  } catch (error) {
+    console.error('Error getting product by ID:', error);
+    throw error;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
+
+export { getAllProducts, getProductById, searchProducts, getAllCategories, addNewProduct, updateProduct, deleteProduct };
