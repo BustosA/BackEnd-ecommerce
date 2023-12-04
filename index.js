@@ -19,15 +19,10 @@ const connection = await connectToDatabase();
 
 app.get('/products/categories', async (req, res) => {
   try {
-    // Realiza la consulta SQL para obtener categorías únicas
     const query = 'SELECT DISTINCT category FROM products';
     const [results] = await connection.query(query);
-
-    // Formatea los resultados en un array
-    const categories = results.map((result) => result.category);
-
-    // Envía el array de categorías al frontend
-    res.json(categories);
+     const categories = results.map((result) => result.category);
+      res.json(categories);
   } catch (error) {
     console.error('Error al obtener categorías:', error);
     res.status(500).json({ error: 'Error al obtener categorías' });
