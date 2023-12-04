@@ -113,7 +113,7 @@ export {
   getAll,
   getProductByIdController,
   searchProductsController,
-  getAllCategories,
+  getAllCategoriesModel as getAllCategories,
   addNewProductController as addNewProduct,
   updateProductController as updateProduct,
   deleteProductController as deleteProduct,
